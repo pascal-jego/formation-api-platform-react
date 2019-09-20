@@ -1,0 +1,8 @@
+
+        // Je stock le token dans mon localStorage
+        windows.localStorage.setItem("authToken", token);
+        // On prévient Axios qu'on a maintenant un header par défaut sur toute nos futures requetes HTTP
+        axios.defaults.headers["Authorization"] = "Bearer " + token;
+
+        const data = await CustomersAPI.findAll();
+        console.log(data);
