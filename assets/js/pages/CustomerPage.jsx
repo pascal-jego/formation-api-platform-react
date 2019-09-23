@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Field from "../components/forms/Fields";
 import { Link } from "react-router-dom";
-import CustomerAPI from "../services/customersAPI";
+import CustomersAPI from "../services/customersAPI";
+import { toast } from "react-toastify";
+import { async } from "q";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 
 const CustomerPage = ({ match, history }) => {
   const { id = "new" } = match.params;
@@ -13,26 +16,32 @@ const CustomerPage = ({ match, history }) => {
     company: ""
   });
 
-  const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const [editing, setEditing] = useState(false);
+  
   // Récupération du customer en fonction de l'identifiant
   const fetchCustomer = async id => {
     try {
-      const { firstName, lastName, email, company } = await CustomerAPI(id);
+      const { firstName, lastName, email, company } = await CustomersAPI.find(id);
+      
       setCustomer({ firstName, lastName, email, company });
+      setLoading(false);
     } catch (error) {
-
-      // TODO :  Notifaction flash d'une erreur
+      // console.log(error.response);
+      toast.error("Le client n'a pas pu êre chargé");
+      history.replace("/customers");
     }
   };
-
-  // Chargement du customer si besoin au chargement du composant ou au changement de l'identifiant
-  useEffect(() => {
-    if (id !== "new") {
-      setEditing(true);
-      fetchCustomer(id);
-    }
-  }, [id]);
+    
+    // Chargement du customer si besoin au chargement du composant ou au changement de l'identifiant
+    useEffect(() => {
+      if (id !== "new") {
+        setLoading(true);
+        setEditing(true);
+        fetchCustomer(id);       
+      }
+    }, [id]);
 
   // Gestion des changement des inputs dans le formulaire
   const handleChange = ({ currentTarget }) => {
@@ -45,15 +54,16 @@ const CustomerPage = ({ match, history }) => {
     event.preventDefault();
 
     try {
+      setErrors({});
+
       if (editing) {
-        await CustomerAPI.update(id, customer);
-        // TODO : Flash notification de succès
+        await CustomersAPI.update(id, customer); 
+        toast.success("Le client a bien été modifié");
       } else {
-        await CustomerAPI.create(customer);
-        // TODO : Flash de notification de succès
+        await CustomersAPI.create(customer);
+        toast.success("Le client a bien été créé");
         history.replace("/customers");
       }
-      setErrors({});
     } catch ({ response }) {
       const { violations } = response.data;
 
@@ -63,7 +73,7 @@ const CustomerPage = ({ match, history }) => {
           apiErrors[propertyPath] = message;
         });
         setErrors(apiErrors);
-        // TODO : Flash notification d'erreurs
+        toast.error("Des erreurs dans votre formulaire");
       }
     }
   };
@@ -81,7 +91,9 @@ const CustomerPage = ({ match, history }) => {
         <h1>Modification du client</h1>
       )}
 
-      <form onSubmit={handleSubmit}>
+      {loading && <FormContentLoader />}
+
+      {!loading && <form onSubmit={handleSubmit}>
         <Field
           name="lastName"
           label="Nom de famille"
@@ -123,7 +135,7 @@ const CustomerPage = ({ match, history }) => {
             Retour à la liste
           </Link>
         </div>
-      </form>
+      </form> }
     </>
   );
 };
