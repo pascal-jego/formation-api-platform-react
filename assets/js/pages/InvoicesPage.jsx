@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
-import axios from "axios";
 import moment from "moment";
-
 import InvoicesAPI from "../services/invoicesAPI";
+import {Link} from "react-router-dom";
 
 const STATUS_CLASSES = {
   PAID: "success",
@@ -50,11 +49,11 @@ const InvoicesPage = props => {
   // gestion de la suppression d'un invoice
   const handleDelete = async id => {
     const originalInvoices = [...invoices];
-    
+
     setInvoices(invoices.filter(invoice => invoice.id !== id));
 
     // 2. L'approche pessimistte
-    try {     
+    try {
       await InvoicesAPI.delete(id);
     } catch (error) {
       console.log(error.response);
@@ -64,30 +63,34 @@ const InvoicesPage = props => {
 
   // Gestion du format de date
   const formatDate = str => moment(str).format("DD/MM//YYYY");
-  
+
   // Gestion de la recherche
   // Filtrages des customers en fonction de la recherche
   const filteredInvoices = invoices.filter(
     i =>
-    i.customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
-    i.customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
-    i.amount.toString().startsWith(search.toLowerCase()) ||
-    STATUS_LABELS[i.status].toLowerCase().includes(search.toLowerCase())
-    
-    );
-    
-    // d'où on part (start) pendant compbien (itemsPerPage)
-    // 3 * 10 - 10 = 20
-    // Pagination des données
-    const paginatedInvoices = Pagination.getData(
-      filteredInvoices,
-      currentPage,
-      itemsPerPage
-    );
+      i.customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      i.customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
+      i.amount.toString().startsWith(search.toLowerCase()) ||
+      STATUS_LABELS[i.status].toLowerCase().includes(search.toLowerCase())
+  );
+
+  // d'où on part (start) pendant compbien (itemsPerPage)
+  // 3 * 10 - 10 = 20
+  // Pagination des données
+  const paginatedInvoices = Pagination.getData(
+    filteredInvoices,
+    currentPage,
+    itemsPerPage
+  );
 
   return (
     <>
-      <h1>Liste des factures</h1>
+      <div className="d-flex justify-content-between align-items-center">
+        <h1>Liste des factures</h1>
+        <Link className="btn btn-primary" to="/invoices/new">
+          Créer une facture
+        </Link>
+      </div>
 
       <div className="form-group">
         <input
@@ -135,8 +138,13 @@ const InvoicesPage = props => {
                 {invoice.amount.toLocaleString()} €
               </td>
               <td>
-                <button className="btn btn-sm btn-primary mr-1">Editer</button>
-                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(invoice.id)}>Supprimer</button>
+                <Link to={"/invoices/" + invoice.id} className="btn btn-sm btn-primary mr-1">Editer</Link>
+                <button
+                  className="btn btn-sm btn-danger"
+                  onClick={() => handleDelete(invoice.id)}
+                >
+                  Supprimer
+                </button>
               </td>
             </tr>
           ))}

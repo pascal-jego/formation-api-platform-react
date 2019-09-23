@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import CustomersAPI from "../services/customersAPI";
-import { async } from "q";
+import { Link } from "react-router-dom";
 
 const CustomersPage = props => {
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  // permet d'aller récuperer les customers 
+  // permet d'aller récuperer les customers
   const fetchCustomers = async () => {
     try {
-      const data = await CustomersAPI.findAll()
-      setCustomers(data)
+      const data = await CustomersAPI.findAll();
+      setCustomers(data);
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
     }
-  }
+  };
 
   // Au chargement du componsant, on va chercher les customers
   useEffect(() => {
-    fetchCustomers()}, []);
+    fetchCustomers();
+  }, []);
 
   // gestion de la suppression d'un customer
   const handleDelete = async id => {
@@ -31,17 +32,17 @@ const CustomersPage = props => {
 
     // 2. L'approche pessimistte
     try {
-      await CustomersAPI.delete(id)
-    } catch(error) {
-      setCustomers(originalCustomers);     
-    }   
+      await CustomersAPI.delete(id);
+    } catch (error) {
+      setCustomers(originalCustomers);
+    }
   };
 
   // Gestion du changement de page
   const handlePageChange = page => setCurrentPage(page);
 
   // Gestion de la recherche
-  const handleSearch = ({currentTarget}) => {   
+  const handleSearch = ({ currentTarget }) => {
     setSearch(currentTarget.value);
     setCurrentPage(1);
   };
@@ -68,7 +69,10 @@ const CustomersPage = props => {
 
   return (
     <>
-      <h1>Liste des clients</h1>
+      <div className="mb-2 d-flex justify-content-between align-items-center">
+        <h1>Liste des clients</h1>
+        <Link to="/customers/new" className="btn btn-primary">Créer un client</Link>
+      </div>
 
       <div className="form-group">
         <input
@@ -125,12 +129,14 @@ const CustomersPage = props => {
         </tbody>
       </table>
 
-      {itemsPerPage < filteredCustomers.length && (<Pagination
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        length={filteredCustomers.length}
-        onPageChanged={handlePageChange}
-      />)}
+      {itemsPerPage < filteredCustomers.length && (
+        <Pagination
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          length={filteredCustomers.length}
+          onPageChanged={handlePageChange}
+        />
+      )}
     </>
   );
 };

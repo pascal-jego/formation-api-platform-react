@@ -1,11 +1,12 @@
 import React, { useState, useContext } from "react";
 import AuthAPI from "../services/authAPI";
 import AuthContext from "../contexts/AuthContext";
+import Field from "../components/forms/Fields";
 
-const LoginPage = ({  history }) => {
+const LoginPage = ({ history }) => {
   // console.log(history);
 
-  const {setIsAuthenticated} = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const [credentials, setCredentials] = useState({
     username: "",
@@ -43,33 +44,26 @@ const LoginPage = ({  history }) => {
     <>
       <h1>Connexion à l'application</h1>
       <form onSubmit={handleSubmit}>
+        <Field
+          label="Adresse email"
+          name="username"
+          value={credentials.username}
+          onChange={handleChange}
+          placeholder="Adresse email de connexion"
+          error={error}
+        />
+
+        <Field
+          label="Mot de passe"
+          name="password"
+          value={credentials.password}
+          onChange={handleChange}
+          type="password"
+          error=""
+        />
+
         <div className="form-group">
-          <label htmlFor="username">Adresse email</label>
-          <input
-            value={credentials.username}
-            onChange={handleChange}
-            type="email"
-            placeholder="Adresse email de connexion"
-            name="username"
-            id="username"
-            className={"form-control" + (error && " is-invalid")}
-          />
-          {error && <p className="invalid-feedback">{error}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="passord"></label>
-          <input
-            value={credentials.password}
-            onChange={handleChange}
-            type="password"
-            className="form-control"
-            placeholder="Mot de passe"
-            name="password"
-            id="password"
-          />
-        </div>
-        <div className="form-group">
-          <button type="submit" className="brn btn-success">
+          <button type="submit" className="brn btn-success btn-lg">
             je me connecte
           </button>
         </div>
