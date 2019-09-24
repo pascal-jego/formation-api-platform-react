@@ -2,6 +2,7 @@ import axios from "axios";
 import CustomersAPI from "./customersAPI";
 import customersAPI from "./customersAPI";
 import jwtDecode from "jwt-decode";
+import { LOGIN_API } from "../config";
 
 /**
  * Déconnexion (suppression du token du localstorage et sur Axios)
@@ -17,7 +18,7 @@ function logout() {
  */
 function authenticate(credentials) {
   return axios
-    .post("http://localhost:8000/api/login_check", credentials)
+    .post(LOGIN_API, credentials)
     .then(response => response.data.token)
     .then(token => {
       // Je stocke le token dans mon localStorage

@@ -15,9 +15,13 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "axios": "^0.18.0",
+        "axios": "^0.18.1",
+        "dgram": "^1.0.1",
+        "dns": "^0.2.2",
+        "fs": "0.0.1-security",
         "jwt-decode": "^2.2.0",
         "moment": "^2.24.0",
+        "net": "^1.0.2",
         "react": "^16.8.6",
         "react-content-loader": "^4.2.2",
         "react-dom": "^16.8.6",
