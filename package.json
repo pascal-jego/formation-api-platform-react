@@ -17,7 +17,7 @@
     "dependencies": {
         "axios": "^0.18.1",
         "dgram": "^1.0.1",
-        "dns": "^0.2.2",
+        "dotenv": "^8.1.0",
         "fs": "0.0.1-security",
         "jwt-decode": "^2.2.0",
         "moment": "^2.24.0",
